@@ -2,7 +2,7 @@ import time
 import RPi.GPIO as GPIO
 from rgbmatrix import RGBMatrix, RGBMatrixOptions
 from PIL import Image
-from GifHander import GifHandler
+from MainProject.GifHander import GifHandler
 import os
 
 class MainMatrix:

@@ -1,8 +1,8 @@
 
-from GifHander import GifHandler
+from MainProject.GifHander import GifHandler
 from tkinter import *
 from tkinter import filedialog
-from LEDGifController import MainMatrix
+from MainProject.LEDGifController import MainMatrix
 import os
 
 matrix = MainMatrix()
