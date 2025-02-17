@@ -54,7 +54,7 @@ This project allows you to display animated GIFs on an LED matrix using a Raspbe
 - `LEDGifController.py`: Controls the LED matrix display.
 
 ## Video Demonstration
-[![Project Video](https://img.youtube.com/vi/jb1RCWxOmg4/0.jpg)](https://www.youtube.com/watch?v=jb1RCWxOmg4)
+[![Project Video](https://img.youtube.com/vi/jb1RCWxOmg4/0.jpg)](https://youtu.be/qi3Wp5_-qgE?si=rS39fsEvTwxCPPDW)
 
 ## References
 - [hzeller/rpi-rgb-led-matrix](https://github.com/hzeller/rpi-rgb-led-matrix)
