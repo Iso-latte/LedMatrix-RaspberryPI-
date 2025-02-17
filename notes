@@ -1,3 +1,0 @@
-To run as root:
-    - xhost +
-    - sudo -E python3 ./GifGUIv03.py
