@@ -9,24 +9,22 @@ matrix = MainMatrix()
 
 
 def deleteGif(root):
-    root.filename = filedialog.askopenfilename(title="select a gif", filetypes=[("Gif Files","*.gif")])#
+    root.filename = filedialog.askopenfilename(title="select a gif", filetypes=[("Gif Files","*.gif")], initialdir="./Assets/Gifs")#
     Gif = GifHandler(root.filename)
     Gif.deleteGif(root.filename)
     return root.filename
 
 def firstGif(filename):
     listOfPics =[]
-    os.chdir('/home/')
-    for x in os.listdir('/home/pi/Documents/GifControllerV_02/Pics/'+filename+'Pics'):
+    #os.chdir(str(os.getcwd()))
+    for x in os.listdir('./Assets/Pics/'+filename+'Pics'):
         listOfPics.append(x)
-    #print(listOfPics)
     matrix.setList(listOfPics)
     for x in range(0,1):
         matrix.simulateLED(filename)
         matrix.matrix.Clear()
 
 def makeGifs(root):
-
     root.filename = filedialog.askopenfilenames(title="select a gif", filetypes=[("Gif Files","*.gif")])#
     list = []
     list.append(root.filename)
@@ -34,27 +32,22 @@ def makeGifs(root):
 
 
 def makeGif(root):
-
-    root.filename = filedialog.askopenfilename(title="select a gif", filetypes=[("Gif Files","*.gif")])#
+    root.filename = filedialog.askopenfilename(title="select a gif", filetypes=[("Gif Files","*.gif")],initialdir="./Assets/Gifs")#
     Gif = GifHandler(root.filename)
     Gif.setUpGif()
     
 def changeGif(filename):
     listOfPics =[]
-    for x in os.listdir('/home/pi/Documents/GifControllerV_02/Pics/'+filename+'Pics'):
+    for x in os.listdir('./Assets/Pics/'+filename+'Pics'):
         listOfPics.append(x)
-    #print(listOfPics)
     matrix.setList(listOfPics)
     for x in range(0,1):
         matrix.simulateLED(filename)
         matrix.matrix.Clear()
-    #pass 
-
-
     
 def getFileNamesWithoutEx():
     listOfNames=[]
-    for names in os.listdir('/home/pi/Documents/GifControllerV_02/Gifs'):
+    for names in os.listdir('./Assets/Gifs'):
         nameOfGif = names.replace('.gif',"")
         listOfNames.append(nameOfGif)
     return listOfNames
@@ -62,7 +55,7 @@ def getFileNamesWithoutEx():
 
 def getFileNamesWithEx():
     listOfNames=[]
-    for names in os.listdir('/home/pi/Documents/GifControllerV_02/Gifs'):
+    for names in os.listdir('./Assets/Gifs'):
         nameOfGif = names
         listOfNames.append(nameOfGif)
     return listOfNames
@@ -86,9 +79,6 @@ def main():
     root.maxsize(width=1050,height=600)
     root.resizable(False,False)
 
-    #Slider= Scale(root, from_=200, to=10000,tickinterval=50, #orien=HORIZONTAL)
-    #Slider.place(relx=0.15,rely=0.06,relwidth=10)
-    #Slider.grid(row=1, column=0, columnspan=10)
 
     TitleLable=Label(root, text='Pick A Gif You Want To Use:\nExtra commands for setting up gifs are at the button\n Note: app requires restart after adding gifs')
     TitleLable.grid(row=0,column=10,columnspan=10)
@@ -98,10 +88,6 @@ def main():
 
     deleteGifButton=Button(root,text='     Delete Gif     ',command=lambda: deleteGif(root))
     deleteGifButton.grid(row=125,column=20,columnspan=10,padx=100,pady=100)
-
-    #openMultiGifButton=Button(root,text='     Set Up Multiple Gifs     ',command=lambda: makeGifs(root))
-    #openMultiGifButton.grid(row=125,column=20,columnspan=10,padx=100,pady=100)
-
 
     Button1=Button(root,height=gifButtonHeight, width = gifButtonWidth, text=fileNames[numberOfFiles-(numberOfFiles-1)],command=lambda: changeGif(fileNames[numberOfFiles-(numberOfFiles-1)]))
     Button1.grid(row=row,column=column,columnspan=10,padx=gifButtonPadx, pady=gifButtonPady)
@@ -187,8 +173,3 @@ def main():
     
 
     root.mainloop()
-    
-
-
-
-main()
