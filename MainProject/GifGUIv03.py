@@ -1,28 +1,18 @@
-
 from MainProject.GifHander import GifHandler
 from tkinter import *
 from tkinter import filedialog
 from MainProject.LEDGifController import MainMatrix
 import os
+import sys
 
 matrix = MainMatrix()
-
+root = Tk()
 
 def deleteGif(root):
     root.filename = filedialog.askopenfilename(title="select a gif", filetypes=[("Gif Files","*.gif")], initialdir="./Assets/Gifs")#
     Gif = GifHandler(root.filename)
     Gif.deleteGif(root.filename)
     return root.filename
-
-def firstGif(filename):
-    listOfPics =[]
-    #os.chdir(str(os.getcwd()))
-    for x in os.listdir('./Assets/Pics/'+filename+'Pics'):
-        listOfPics.append(x)
-    matrix.setList(listOfPics)
-    for x in range(0,1):
-        matrix.simulateLED(filename)
-        matrix.matrix.Clear()
 
 def makeGifs(root):
     root.filename = filedialog.askopenfilenames(title="select a gif", filetypes=[("Gif Files","*.gif")])#
@@ -37,14 +27,12 @@ def makeGif(root):
     Gif.setUpGif()
     
 def changeGif(filename):
-    listOfPics =[]
-    for x in os.listdir('./Assets/Pics/'+filename+'Pics'):
-        listOfPics.append(x)
-    matrix.setList(listOfPics)
-    for x in range(0,1):
-        matrix.simulateLED(filename)
-        matrix.matrix.Clear()
-    
+    matrix.stop_event.set()
+    if matrix.animation_thread and matrix.animation_thread.is_alive():
+        matrix.animation_thread.join()  # Wait for the current animation to stop.
+    matrix.stop_event.clear()
+    matrix.simulateLED(filename)
+        
 def getFileNamesWithoutEx():
     listOfNames=[]
     for names in os.listdir('./Assets/Gifs'):
@@ -60,22 +48,21 @@ def getFileNamesWithEx():
         listOfNames.append(nameOfGif)
     return listOfNames
 
+def on_closing():
+    matrix.stop_animation()  # Stop any running animation
+    sys.exit(0)  # Exit the program cleanly
 
 def main():
 
     fileNames = getFileNamesWithoutEx()
-    numberOfFiles = len(fileNames)
-    column=0
     row = 5
-    n=0
 
     gifButtonPady = 25
-    gifButtonPadx =0
+    gifButtonPadx = 100
     gifButtonHeight = 4
     gifButtonWidth = 15
-
-    root = Tk()
-    root.title("MATRIX GOALS")
+    root.title("Gif GUI")
+    root.minsize(width=1050,height=600)
     root.maxsize(width=1050,height=600)
     root.resizable(False,False)
 
@@ -83,93 +70,14 @@ def main():
     TitleLable=Label(root, text='Pick A Gif You Want To Use:\nExtra commands for setting up gifs are at the button\n Note: app requires restart after adding gifs')
     TitleLable.grid(row=0,column=10,columnspan=10)
 
-    openGifButton=Button(root,text='     Set A Up Gif     ',command=lambda: makeGif(root))
-    openGifButton.grid(row=125,column=0,columnspan=10,padx=100,pady=100)
-
     deleteGifButton=Button(root,text='     Delete Gif     ',command=lambda: deleteGif(root))
-    deleteGifButton.grid(row=125,column=20,columnspan=10,padx=100,pady=100)
+    deleteGifButton.grid(row=125,column=10,columnspan=10,padx=100,pady=100)
 
-    Button1=Button(root,height=gifButtonHeight, width = gifButtonWidth, text=fileNames[numberOfFiles-(numberOfFiles-1)],command=lambda: changeGif(fileNames[numberOfFiles-(numberOfFiles-1)]))
-    Button1.grid(row=row,column=column,columnspan=10,padx=gifButtonPadx, pady=gifButtonPady)
-    column+=5
+    for i, fileName in enumerate(fileNames):
+        row, col = divmod(i, 5)  # Arrange buttons in rows of 5
+        Button(root, height=gifButtonHeight, width=gifButtonWidth, text=fileName,
+            command=lambda fn=fileName: changeGif(fn)).grid(row=row + 5, column=col * 5,
+                                                            columnspan=10, padx=gifButtonPadx, pady=gifButtonPady)
     
-    Button2=Button(root,height=gifButtonHeight, width = gifButtonWidth, text=fileNames[numberOfFiles-(numberOfFiles)],command=lambda: changeGif(fileNames[numberOfFiles-(numberOfFiles)]))
-    Button2.grid(row=row,column=column,columnspan=10,padx=gifButtonPadx,pady=gifButtonPady)
-    column+=5
- 
-
-    Button3=Button(root,height=gifButtonHeight, width = gifButtonWidth,text=fileNames[numberOfFiles-(numberOfFiles+1)],command=lambda: changeGif(fileNames[numberOfFiles-(numberOfFiles+1)]))
-    Button3.grid(row=row,column=column,columnspan=10,padx=gifButtonPadx,pady=gifButtonPady)
-    column+=5
- 
-    if numberOfFiles >3:
-
-        Button4=Button(root,height=gifButtonHeight, width = gifButtonWidth, text=fileNames[numberOfFiles-(numberOfFiles+2)],command=lambda: changeGif(fileNames[numberOfFiles-(numberOfFiles+2)]))
-
-        Button4.grid(row=row,column=column,columnspan=10,padx=gifButtonPadx, pady=gifButtonPady)
-
-        column+=5
-
-    if numberOfFiles >4:
-        Button5=Button(root,height=gifButtonHeight, width = gifButtonWidth, text=fileNames[numberOfFiles-(numberOfFiles+3)],command=lambda: changeGif(fileNames[numberOfFiles-(numberOfFiles+3)]))
-        Button5.grid(row=row,column=column,columnspan=10,padx=gifButtonPadx,pady=gifButtonPady)
-        column+=5
-    
-    if numberOfFiles >5:
-        column = 0
-        row = 10
-        Button6=Button(root,height=gifButtonHeight, width = gifButtonWidth,text=fileNames[numberOfFiles-(numberOfFiles+4)],command=lambda: changeGif(fileNames[numberOfFiles-(numberOfFiles+4)]))
-        Button6.grid(row=row,column=column,columnspan=10,padx=gifButtonPadx,pady=gifButtonPady)
-        column+=5
-
-    if numberOfFiles>6:
-        Button7=Button(root,height=gifButtonHeight, width = gifButtonWidth,text=fileNames[numberOfFiles-(numberOfFiles+5)],command=lambda: changeGif(fileNames[numberOfFiles-(numberOfFiles+5)]))
-        Button7.grid(row=row,column=column,columnspan=10,padx=gifButtonPadx,pady=gifButtonPady)
-        column+=5
-
-    if numberOfFiles>7:
-        Button8=Button(root,height=gifButtonHeight, width = gifButtonWidth,text=fileNames[numberOfFiles-(numberOfFiles+6)],command=lambda: changeGif(fileNames[numberOfFiles-(numberOfFiles+6)]))
-        Button8.grid(row=row,column=column,columnspan=10,padx=gifButtonPadx,pady=gifButtonPady)
-        column+=5
-
-    if numberOfFiles>8:
-        Button9=Button(root,height=gifButtonHeight, width = gifButtonWidth,text=fileNames[numberOfFiles-(numberOfFiles+7)],command=lambda: changeGif(fileNames[numberOfFiles-(numberOfFiles+7)]))
-        Button9.grid(row=row,column=column,columnspan=10,padx=gifButtonPadx,pady=gifButtonPady)
-        column+=5
-
-    if numberOfFiles>9:
-        Button10=Button(root,height=gifButtonHeight, width = gifButtonWidth,text=fileNames[numberOfFiles-(numberOfFiles+8)],command=lambda: changeGif(fileNames[numberOfFiles-(numberOfFiles+8)]))
-        Button10.grid(row=row,column=column,columnspan=10,padx=gifButtonPadx,pady=gifButtonPady)
-        column+=5
-    
-
-    if numberOfFiles>10:
-        column = 0
-        row = 15
-        Button11=Button(root,height=gifButtonHeight, width = gifButtonWidth,text=fileNames[numberOfFiles-(numberOfFiles+9)],command=lambda: changeGif(fileNames[numberOfFiles-(numberOfFiles+9)]))
-        Button11.grid(row=row,column=column,columnspan=10,padx=gifButtonPadx,pady=gifButtonPady)
-        column+=5
-    
-    if numberOfFiles>11:
-        Button12=Button(root,height=gifButtonHeight, width = gifButtonWidth,text=fileNames[numberOfFiles-(numberOfFiles+10)],command=lambda: changeGif(fileNames[numberOfFiles-(numberOfFiles+10)]))
-        Button12.grid(row=row,column=column,columnspan=10,padx=gifButtonPadx,pady=gifButtonPady)
-        column+=5
-
-    if numberOfFiles>12:
-        Button12=Button(root,height=gifButtonHeight, width = gifButtonWidth,text=fileNames[numberOfFiles-(numberOfFiles+11)],command=lambda: changeGif(fileNames[numberOfFiles-(numberOfFiles+11)]))
-        Button12.grid(row=row,column=column,columnspan=10,padx=gifButtonPadx,pady=gifButtonPady)
-        column+=5
-
-    if numberOfFiles>13:
-        Button12=Button(root,height=gifButtonHeight, width = gifButtonWidth,text=fileNames[numberOfFiles-(numberOfFiles+12)],command=lambda: changeGif(fileNames[numberOfFiles-(numberOfFiles+12)]))
-        Button12.grid(row=row,column=column,columnspan=10,padx=gifButtonPadx,pady=gifButtonPady)
-        column+=5
-
-    if numberOfFiles>14:
-        Button12=Button(root,height=gifButtonHeight, width = gifButtonWidth,text=fileNames[numberOfFiles-(numberOfFiles+13)],command=lambda: changeGif(fileNames[numberOfFiles-(numberOfFiles+13)]))
-        Button12.grid(row=row,column=column,columnspan=10,padx=gifButtonPadx,pady=gifButtonPady)
-        column+=5
-    
-    
-
+    root.protocol("WM_DELETE_WINDOW", on_closing)
     root.mainloop()
